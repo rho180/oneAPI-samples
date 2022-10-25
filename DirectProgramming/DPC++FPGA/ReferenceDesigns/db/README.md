@@ -89,7 +89,7 @@ After learning how to use the extensions for Intel oneAPI Toolkits, return to th
    cmake .. -DQUERY=<QUERY_NUMBER>
    ```
 
-   Where `<QUERY_NUMBER>` can be one of `1`, `9`, `11` or `12`.
+   Where `<QUERY_NUMBER>` can be one of `9`, `11` or `12`.
 
 2. Compile the design through the generated `Makefile`. The following targets are provided, matching the recommended development flow:
 
@@ -130,7 +130,7 @@ After learning how to use the extensions for Intel oneAPI Toolkits, return to th
    cmake -G "NMake Makefiles" .. -DQUERY=<QUERY_NUMBER>
    ```
 
-   Where `<QUERY_NUMBER>` can be one of `1`, `9`, `11` or `12`.
+   Where `<QUERY_NUMBER>` can be one of `9`, `11` or `12`.
 
 2. Compile the design through the generated `Makefile`. The following targets are provided, matching the recommended development flow:
 
