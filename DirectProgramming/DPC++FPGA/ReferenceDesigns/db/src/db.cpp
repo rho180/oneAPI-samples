@@ -37,12 +37,7 @@
 using namespace sycl;
 
 // include files depending on the query selected
-#if (QUERY == 1)
-#include "query1/query1_kernel.hpp"
-bool DoQuery1(queue& q, Database& dbinfo, std::string& db_root_dir,
-              std::string& args, bool test, bool print, double& kernel_latency,
-              double& total_latency);
-#elif (QUERY == 9)
+#if (QUERY == 9)
 #include "query9/query9_kernel.hpp"
 bool DoQuery9(queue& q, Database& dbinfo, std::string& db_root_dir,
               std::string& args, bool test, bool print, double& kernel_latency,
@@ -224,13 +219,7 @@ int main(int argc, char* argv[]) {
     // run 'runs' iterations of the query
     for (unsigned int run = 0; run < runs && success; run++) {
       // run the selected query
-      if (query == 1) {
-#if (QUERY == 1)
-        success = DoQuery1(q, dbinfo, db_root_dir, args,
-                           test_query, print_result,
-                           kernel_latency[run], total_latency[run]);
-#endif
-      } else if (query == 9) {
+      if (query == 9) {
         // query9
 #if (QUERY == 9)
         success = DoQuery9(q, dbinfo, db_root_dir, args,
@@ -298,70 +287,6 @@ int main(int argc, char* argv[]) {
 
   return 0;
 }
-
-#if (QUERY == 1)
-bool DoQuery1(queue& q, Database& dbinfo, std::string& db_root_dir,
-              std::string& args, bool test, bool print, double& kernel_latency,
-              double& total_latency) {
-  // NOTE: this is fixed based on the TPCH docs
-  Date date = Date("1998-12-01");
-  unsigned int DELTA = 90;
-
-  // parse the query arguments
-  if (!test && !args.empty()) {
-    std::stringstream ss(args);
-    std::string tmp;
-    std::getline(ss, tmp, ',');
-    DELTA = atoi(tmp.c_str());
-  } else {
-    if (!args.empty()) {
-      std::cout << "Testing query 1, therefore ignoring the '--args' flag\n";
-    }
-  }
-
-  // check query arguments
-  if (!(DELTA <= 120 && DELTA >= 60)) {
-    std::cerr << "ERROR: DELTA must be in the range [60,120]\n";
-    return false;
-  }
-
-  // compute query interval
-  Date low_date = date.PreviousDate(DELTA);
-  unsigned int low_date_compact = low_date.ToCompact();
-
-  std::cout << "Running Q1 within " << DELTA << " days of " << date.year << "-"
-            << date.month << "-" << date.day << std::endl;
-
-  // the query output data
-  std::array<DBDecimal, kQuery1OutSize> sum_qty = {0}, sum_base_price = {0},
-                                       sum_disc_price = {0}, sum_charge = {0},
-                                       avg_qty = {0}, avg_price = {0},
-                                       avg_discount = {0}, count = {0};
-
-  // perform the query
-  bool success =
-      SubmitQuery1(q, dbinfo, low_date_compact, sum_qty, sum_base_price,
-                   sum_disc_price, sum_charge, avg_qty, avg_price, avg_discount,
-                   count, kernel_latency, total_latency);
-
-  if (success) {
-    // validate the results of the query, if requested
-    if (test) {
-      success = dbinfo.ValidateQ1(db_root_dir, sum_qty, sum_base_price,
-                                  sum_disc_price, sum_charge, avg_qty,
-                                  avg_price, avg_discount, count);
-    }
-
-    // print the results of the query, if requested
-    if (print) {
-      dbinfo.PrintQ1(sum_qty, sum_base_price, sum_disc_price, sum_charge,
-                     avg_qty, avg_price, avg_discount, count);
-    }
-  }
-
-  return success;
-}
-#endif
 
 #if (QUERY == 9)
 bool DoQuery9(queue& q, Database& dbinfo, std::string& db_root_dir,
