@@ -1,6 +1,6 @@
 
 
-# task_sequence
+# The `task_sequence` extension
 This FPGA tutorial demonstrates how to use the task_sequence extension to asynchronously run sub-kernel sets of operations, called tasks, in parallel. The task_sequence extension provides a templated class, task_sequence, that defines an API for asynchronously launching a parallel task, and for retrieving the results of that task. Objects of this class represent a FIFO queue of tasks matching the order in which these tasks were invoked, as well as an instantiation of the FPGA hardware used to perform the operations of that task.
 
 ***Documentation***:  The [DPC++ FPGA Code Samples Guide](https://software.intel.com/content/www/us/en/develop/articles/explore-dpcpp-through-intel-fpga-code-samples.html) helps you to navigate the samples and build your knowledge of DPC++ for FPGA. <br>
