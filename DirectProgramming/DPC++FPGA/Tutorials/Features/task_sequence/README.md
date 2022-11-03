@@ -1,7 +1,7 @@
 
 
 # The `task_sequence` extension
-This FPGA tutorial demonstrates how to use the task_sequence extension to asynchronously run sub-kernel sets of operations, called tasks, in parallel. The task_sequence extension provides a templated class, task_sequence, that defines an API for asynchronously launching a parallel task, and for retrieving the results of that task. Objects of this class represent a FIFO queue of tasks matching the order in which these tasks were invoked, as well as an instantiation of the FPGA hardware used to perform the operations of that task.
+This FPGA tutorial demonstrates how to use the `task_sequence` extension to asynchronously run sub-kernel sets of operations, called tasks, in parallel. The `task_sequence` extension provides a templated class, `task_sequence`, that defines an API for asynchronously launching a parallel task, and for retrieving the results of that task. Objects of this class represent a FIFO queue of tasks matching the order in which these tasks were invoked, as well as an instantiation of the FPGA hardware used to perform the operations of that task.
 
 ***Documentation***:  The [DPC++ FPGA Code Samples Guide](https://software.intel.com/content/www/us/en/develop/articles/explore-dpcpp-through-intel-fpga-code-samples.html) helps you to navigate the samples and build your knowledge of DPC++ for FPGA. <br>
 The [oneAPI DPC++ FPGA Optimization Guide](https://software.intel.com/content/www/us/en/develop/documentation/oneapi-fpga-optimization-guide) is the reference manual for targeting FPGAs through DPC++. <br>
@@ -9,7 +9,7 @@ The [oneAPI Programming Guide](https://www.intel.com/content/www/us/en/develop/d
 
 | Optimized for                     | Description
 ---                                 |---
-| OS                                | Linux* Ubuntu* 18.04/20.04, RHEL*/CentOS* 8, SUSE* 15; Windows* 10
+| OS                                | Linux* Ubuntu* 18.04/20.04 <br> RHEL*/CentOS* 8 <br> SUSE* 15 <br> Windows* 10
 | Hardware                          | Intel® Programmable Acceleration Card (PAC) with Intel Arria® 10 GX FPGA <br> Intel® FPGA Programmable Acceleration Card (PAC) D5005 (with Intel Stratix® 10 SX) <br> Intel® FPGA 3rd party / custom platforms with oneAPI support <br> *__Note__: Intel® FPGA PAC hardware is only compatible with Ubuntu 18.04*
 | Software                          | Intel® oneAPI DPC++ Compiler <br> Intel® FPGA Add-On for oneAPI Base Toolkit
 | What you will learn               | Basics of task_sequence declaration and usage 
@@ -19,16 +19,16 @@ The [oneAPI Programming Guide](https://www.intel.com/content/www/us/en/develop/d
 
 ## Purpose
 
-Use objects of a task_sequence class to asychronously run parallel tasks, and to define the hardware that is instantiated to perform those tasks. An API for invoking tasks and retriving results of these tasks imposes a FIFO ordering on outstanding tasks and their results. The scope of a task_sequence object defines the lifetime in which the hardware represented by that object can be used to perform a task. Users can control hardware reuse and replication by declaring single or multiple objects of the same task_sequence class.
+Use objects of a `task_sequence` class to asynchronously run parallel tasks, and to define the hardware that is instantiated to perform those tasks. An API for invoking tasks and retrieving results of these tasks imposes a FIFO ordering on outstanding tasks and their results. The scope of a `task_sequence` object defines the lifetime in which the hardware represented by that object can be used to perform a task. Users can control hardware reuse and replication by declaring single or multiple objects of the same `task_sequence` class.
 
-### Declaring a task_sequence
-A task_sequence is a templated class that defines a set of operations (task), and methods for asynchronously invoking parallel instances of that task, and retrieiving the results of those parallel tasks in FIFO order. The first template parameter is an auto reference to a Callable f that defines the asynchronous task to be associated with the task_sequence. The requirement for an auto reference amounts to a requirement that f be statically resolvable at compile time, i.e., not a function pointer. Furthermore, the return type and argument types of f must be resolvable and fixed for each definition of task_sequence.
+### Declaring a `task_sequence`
+A `task_sequence` is a templated class that defines a set of operations (tasks), and methods for asynchronously invoking parallel instances of these tasks, and retrieving their results in a FIFO order. The first template parameter is an auto reference to a callable `f` that defines the asynchronous task to be associated with the `task_sequence`. The requirement for an auto reference amounts to a requirement that `f` be statically resolvable at compile time, i.e., not a function pointer. Furthermore, the return type and argument types of `f` must be resolvable and fixed for each definition of `task_sequence`.
 
-The task_sequence class optionally takes two additional unsigned int template parameters specifying the invocation capacity and response capacity for instantiated task_sequence objects. The invocation capacity parameter defines the minimum number of task invocations (see [async](async) in [task_sequence API](task_sequence API) below) that must be supported without any response being collected (see [get](get) in [task_sequence API](task_sequence API) below). This number of async invocations without a get call is the minimum number that will be supported before a subsequenct async member function may block. A default value of 1 is assumed if the invocation capacity parameter is not specified.
+The `task_sequence` class optionally takes two additional `unsigned int` template parameters specifying the invocation capacity and response capacity for instantiated `task_sequence` objects. The invocation capacity parameter defines the minimum number of task invocations (see [async](async) in [task_sequence API](task_sequence API) below) that must be supported without any response being collected (see [get](get) in [task_sequence API](task_sequence API) below). This number of `async` invocations without a `get` call is the minimum number that will be supported before a subsequent `async` member function may block. A default value of 1 is assumed if the invocation capacity parameter is not specified.
 
-The response capacity paramter defines the maximum number of outstanding async invocations such that all outstanding invocations are guaranteed to make forward progress. Further async invocations may block until enough get calls are invoked such that the number of outstanding async invocations is reduced to the response capacity. A default value of 1 is assumed if the response capacity parameter is not specified.
+The response capacity parameter defines the maximum number of outstanding `async` invocations such that all outstanding invocations are guaranteed to make forward progress. Further `async` invocations may block until enough `get` calls are invoked such that the number of outstanding `async` invocations is reduced to the response capacity. A default value of 1 is assumed if the response capacity parameter is not specified.
 
-Object instances of a templated task_sequence class represent a specific instantiation of FPGA hardware to perform the operations of the task f. Users can control the amount of replication of FPGA hardware by the number of object declarations they use.
+Object instances of a templated `task_sequence` class represent a specific instantiation of FPGA hardware to perform the operations of the task `f`. Users can control the amount of replication of FPGA hardware by the number of object declarations they use.
 
 ```c++
 int someTask(int intArg, float floatArg) {
@@ -44,18 +44,18 @@ int someTask(int intArg, float floatArg) {
 
 ```
 
-In this example, `firstInstance` and `secondInstance` are two task_sequence objects that implement the task `someTask`, which takes an integer argument and returns and integer result. Since they are two different object instances, they represent two distinct instances of FPGA hardware implementing `someTask`, as well as two separate queues for holding the results of parallel invocations of `someTask`. 
+In this example, `firstInstance` and `secondInstance` are two `task_sequence` objects that implement the task `someTask`, which takes an integer argument and returns and integer result. Since they are two different object instances, they represent two distinct instances of FPGA hardware implementing `someTask`, as well as two separate queues for holding the results of parallel invocations of `someTask`. 
 
 ### task_sequence API
 
-task_sequence provides two methods for asynchronously invoking and collecting parallel instances of the templated task function. 
+`task_sequence` provides two methods for asynchronously invoking and collecting parallel instances of the templated task function. 
   
-  - [async](#asymc)
+  - [async](#async)
   - [get](#get)
 
 #### async
 
-The async method asynchronously invokes a parallel instance of the templated task function. The async method takes the same arguments (the same type and same order) as those defined in the templated task function's signature. 
+The `async` method asynchronously invokes a parallel instance of the templated task function. The `async` method takes the same arguments (the same type and same order) as those defined in the templated task function's signature. 
 
 ```c++
 int someTask(int intArg, float floatArg);
@@ -77,11 +77,11 @@ int someTask(int intArg, float floatArg);
 
 ```
 
-In the above example, two asynchronous parallel invocations of 'someTask' are invoked on the FPGA hardware represented by the firstInstance task_sequence object. The first parallel task is invoked with arguments 'argA' and 'argB', and the second invocation with 'argC' and 'argD'. 
+In the above example, two asynchronous parallel invocations of `someTask` are invoked on the FPGA hardware represented by the `firstInstance` `task_sequence` object. The first parallel task is invoked with arguments `argA` and `argB`, and the second invocation with `argC` and `argD`. 
 
 
 #### get
-The get method collects the result of a task_sequence task previously invoked through the async method. The get method for a particular task_sequence object has the same return type as the templated task function for the object. Calling get returns results in the same order in which the tasks were invoked.
+The `get` method collects the result of a `task_sequence` task previously invoked through the `async` method. The `get` method for a particular `task_sequence` object has the same return type as the templated task function for the object. Calling `get` returns results in the same order in which the tasks were invoked.
  
 ```c++
 // FPGA code
@@ -104,12 +104,12 @@ The get method collects the result of a task_sequence task previously invoked th
 
 ```
 
-In this continuation of the async example, firstResult contains the return value of the async invocation using (argA, argB), and secondResult contains the return value of the async invocation using (argC, argD). 
+In this continuation of the `async` example, `firstResult` contains the return value of the `async` invocation using `(argA, argB)`, and `secondResult` contains the return value of the `async` invocation using `(argC, argD)`. 
 
-The get method is a blocking call. That is, if no previous async invocation has completed, get will block until one has.
+The `get` method is a blocking call. That is, if no previous `async` invocation has completed, `get` will block until one has.
 
 ### Testing the Tutorial
-In `task_sequence.cpp`, the dot product of a 16k element vector is calculated twice. The first calculation, performed in the 'SequentialTask' kernel, is performed by a single async invocation of the 'dotProduct' function by a single task_sequence object.
+In `task_sequence.cpp`, the dot product of a 16k element vector is calculated twice. The first calculation, performed in the `SequentialTask` kernel, is performed by a single `async` invocation of the `dotProduct` function by a single `task_sequence` object.
 
 
 ```c++
@@ -119,7 +119,7 @@ h.single_task<SequentialTask>([=]() {
   out_acc[0] = whole.get();
 });
 ```
-The second calculation, performed by the `ParallelTask` kernel, is performed by 4 async invocations of the `dotProduct` function via 4 different task_sequence objects. Each async invocation operates on one-quarter of the vector. Since each async invocation utilizes its own FPGA hardware and operates on a different quarter of the vector, each partial dot product calculation can be done in parallel, speeding up the result.
+The second calculation, performed by the `ParallelTask` kernel, is performed by 4 `async` invocations of the `dotProduct` function via 4 different `task_sequence` objects. Each `async` invocation operates on one-quarter of the vector. Since each `async` invocation utilizes its own FPGA hardware and operates on a different quarter of the vector, each partial dot product calculation can be done in parallel, speeding up the result.
 
 ```c++
 h.single_task<ParallelTask>([=]() {
@@ -137,8 +137,8 @@ h.single_task<ParallelTask>([=]() {
 ```
 
 ## Key Concepts
-* Basics of declaring task_sequence objects
-* Using task_sequence async and get API for invoking and collecting parallel tasks
+* Basics of declaring `task_sequence` objects
+* Using `task_sequence` `async` and `get` API for invoking and collecting parallel tasks
 
 ## License
 Code samples are licensed under the MIT license. See
@@ -275,7 +275,8 @@ dependencies and permissions errors.
 
  ### In Third-Party Integrated Development Environments (IDEs)
 
-You can compile and run this tutorial in the Eclipse* IDE (in Linux*) and the Visual Studio* IDE (in Windows*). For instructions, refer to the following link: [Intel® oneAPI DPC++ FPGA Workflows on Third-Party IDEs]([https://software.intel.com/en-us/articles/intel-oneapi-dpcpp-fpga-workflow-on-ide](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-oneapi-dpcpp-fpga-workflow-on-ide.html))
+You can compile and run this tutorial in the Eclipse* IDE (in Linux*) and the Visual Studio* IDE (in Windows*).
+For instructions, refer to [FPGA Workflows on Third-Party IDEs for Intel&reg; oneAPI Toolkits](https://www.intel.com/content/www/us/en/developer/articles/technical/intel-oneapi-dpcpp-fpga-workflow-on-ide.html).
 
 ## Examining the Reports
 
@@ -285,11 +286,11 @@ Open the **Views** menu and select **System Viewer**.
 
 In the left-hand pane, select **SequentialTask.B0** under the System hierarchy.
 
-In the main **System Viewer** pane, the task_sequence async and get for the single 'whole' task_sequence object are highlighted as a 'WR' and 'RD' node respectively. These represent a write pipe for writing the arguments and start command to the 'dotProduct' task function, and a read pipe for returning the results.
+In the main **System Viewer** pane, the `task_sequence` `async` and `get` for the single `whole` `task_sequence` object are highlighted as a `WR` and `RD` node respectively. These represent a write pipe for writing the arguments and start command to the `dotProduct` task function, and a read pipe for returning the results.
 
 Now select **ParallelTask.B0** in the left-hand pane.
 
-In the main **System Viewer(( pane, the four task_sequence async and get commands for the four task_sequence objects of the parallelTask kernel are highlighted. These represent the four parallel async invocations in this kernel. As in the the sequentialTask kernel, the 'WR' nodes represent pipes for writing the arguments and start command to each instance of the 'dotProduct' task function (since there are 4 task_sequence objects, there are 4 hardware instances), and the 'RD' nodes represent pipes for returning the results.
+In the main **System Viewer(( pane, the four `task_sequence` `async` and `get` commands for the four `task_sequence` objects of the `parallelTask` kernel are highlighted. These represent the four parallel `async` invocations in this kernel. As in the the `sequentialTask` kernel, the `WR` nodes represent pipes for writing the arguments and start command to each instance of the `dotProduct` task function (since there are 4 `task_sequence` objects, there are 4 hardware instances), and the `RD` nodes represent pipes for returning the results.
 
 ## Running the Sample
 
@@ -301,6 +302,7 @@ In the main **System Viewer(( pane, the four task_sequence async and get command
 2. Run the sample on the FPGA device:
      ```
      ./task_sequence.fpga         (Linux)
+     task_sequence.fpga.exe     (Windows)
      ```
 
 ### Example of Output

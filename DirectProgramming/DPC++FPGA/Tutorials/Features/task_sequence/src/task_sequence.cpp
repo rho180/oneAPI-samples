@@ -1,4 +1,4 @@
-#include <CL/sycl.hpp>
+#include <sycl/sycl.hpp>
 #include <ext/intel/experimental/task_sequence.hpp>
 #include <sycl/ext/intel/fpga_extensions.hpp>
 
@@ -7,7 +7,7 @@
 #include <iostream>
 #include <random>
 
-#include "dpc_common.hpp"
+#include "exception_handler.hpp"
 
 using ValueT = float;
 

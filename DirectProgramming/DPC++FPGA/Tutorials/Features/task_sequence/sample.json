@@ -3,17 +3,25 @@
   "name": "task_sequence",
   "categories": ["Toolkit/oneAPI Direct Programming/DPC++ FPGA/Tutorials/Features"],
   "description": "An Intel® FPGA tutorial demonstrating the usage of the task_sequence extenstion",
-  "toolchain": ["dpcpp"],
+  "toolchain": ["icpx"],
   "os": ["linux", "windows"],
   "targetDevice": ["FPGA"],
   "builder": ["ide", "cmake"],
-  "languages": [{"cpp":{}}],
+  "languages": [{"cpp":{}}],  "commonFolder": {
+    "base": "../../../..",
+    "include": [
+      "README.md",
+      "Tutorials/Features/experimental/task_sequence",
+      "include"
+    ],
+    "exclude": []
+  },
   "ciTests": {
     "linux": [
       {
         "id": "fpga_emu",
         "steps": [
-          "dpcpp --version",
+          "icpx --version",
           "mkdir build",
           "cd build",
           "cmake ..",
@@ -24,7 +32,7 @@
       {
         "id": "report",
         "steps": [
-          "dpcpp --version",
+          "icpx --version",
           "mkdir build",
           "cd build",
           "cmake ..",
@@ -36,7 +44,7 @@
       {
         "id": "fpga_emu",
         "steps": [
-          "dpcpp --version",
+          "icpx  --version",
           "cd ../../..",
           "mkdir build",
           "cd build",
@@ -48,7 +56,7 @@
       {
         "id": "report",
         "steps": [
-          "dpcpp --version",
+          "icpx --version",
           "cd ../../..",
           "mkdir build",
           "cd build",
